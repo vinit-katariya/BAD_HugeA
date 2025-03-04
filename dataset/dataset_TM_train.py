@@ -9,6 +9,7 @@ import utils.paramUtil as paramUtil
 from torch.utils.data._utils.collate import default_collate
 import random
 import math
+from pathlib import Path
 
 def collate_fn(batch):
     batch.sort(key=lambda x: x[3], reverse=True)
@@ -29,7 +30,9 @@ class Text2MotionDataset(data.Dataset):
         self.mot_end_idx = codebook_size
         self.mot_pad_idx = codebook_size + 1 # [TODO] I think 513 (codebook_size+1) can be what ever, it will be croped out
         if dataset_name == 't2m':
-            self.data_root = './dataset/HumanML3D'
+            # self.data_root = './dataset/HumanML3D'
+
+            self.data_root = Path(__file__).resolve().parents[3] / "gmaldon2/research/momask-codes/dataset/HumanML3D"
             self.motion_dir = pjoin(self.data_root, 'new_joint_vecs')
             self.text_dir = pjoin(self.data_root, 'texts')
             self.joints_num = 22

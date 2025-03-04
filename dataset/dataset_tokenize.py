@@ -5,6 +5,9 @@ from os.path import join as pjoin
 import random
 import codecs as cs
 from tqdm import tqdm
+import os
+
+from pathlib import Path
 
 
 
@@ -19,7 +22,10 @@ class VQMotionDataset(data.Dataset):
         min_motion_len = 40 if dataset_name =='t2m' else 24
         
         if dataset_name == 't2m':
-            self.data_root = './dataset/HumanML3D'
+            # self.data_root = './dataset/HumanML3D'
+            # self.data_root = '../../../gmaldon2/research/momask-codes/dataset/HumanML3D'
+            # self.data_root = os.path.abspath('../../../gmaldon2/research/momask-codes/dataset/HumanML3D')
+            self.data_root = Path(__file__).resolve().parents[3] / "gmaldon2/research/momask-codes/dataset/HumanML3D"
             self.motion_dir = pjoin(self.data_root, 'new_joint_vecs')
             self.text_dir = pjoin(self.data_root, 'texts')
             self.joints_num = 22
@@ -27,10 +33,11 @@ class VQMotionDataset(data.Dataset):
             fps = 20
             self.max_motion_length = 196
             self.dim_pose = 263
-            self.meta_dir = 'checkpoints/t2m/VQVAEV3_CB1024_CMT_H1024_NRES3/meta'
+            self.meta_dir = '/home/vkatariy/BAD/dataset/prepare/checkpoints/t2m/VQVAEV3_CB1024_CMT_H1024_NRES3/meta'
             #kinematic_chain = paramUtil.t2m_kinematic_chain
         elif dataset_name == 'kit':
-            self.data_root = './dataset/KIT-ML'
+            # self.data_root = './dataset/KIT-ML'
+            self.data_root = './../../../gmaldon2/research/momask-codes/dataset/KIT-ML'
             self.motion_dir = pjoin(self.data_root, 'new_joint_vecs')
             self.text_dir = pjoin(self.data_root, 'texts')
             self.joints_num = 21
@@ -38,7 +45,7 @@ class VQMotionDataset(data.Dataset):
             fps = 12.5
             self.dim_pose = 251
             self.max_motion_length = 196
-            self.meta_dir = 'checkpoints/kit/VQVAEV3_CB1024_CMT_H1024_NRES3/meta'
+            self.meta_dir = '/home/vkatariy/BAD/dataset/prepare/checkpoints/t2m/VQVAEV3_CB1024_CMT_H1024_NRES3/meta'
             #kinematic_chain = paramUtil.kit_kinematic_chain
         
         joints_num = self.joints_num
@@ -46,6 +53,9 @@ class VQMotionDataset(data.Dataset):
         mean = np.load(pjoin(self.meta_dir, 'mean.npy'))
         std = np.load(pjoin(self.meta_dir, 'std.npy'))
         
+        print("Resolved dataset path:", self.data_root)
+        print("Does path exist?", os.path.exists(self.data_root))
+
         split_file = pjoin(self.data_root, 'train.txt')
         
         data_dict = {}

@@ -247,14 +247,18 @@ if master_process:
     logger.info(f"Number of transformer parameters: {n/1e6} M")
 
 ############ eval_wrapper ##############
-dataset_opt_path = 'checkpoints/kit/Comp_v6_KLD005/opt.txt' \
-    if args.dataname == 'kit' else 'checkpoints/t2m/Comp_v6_KLD005/opt.txt'
+# dataset_opt_path = 'checkpoints/kit/Comp_v6_KLD005/opt.txt' \
+    # if args.dataname == 'kit' else 'checkpoints/t2m/Comp_v6_KLD005/opt.txt'
+dataset_opt_path = '/home/vkatariy/BAD/dataset/prepare/checkpoints/kit/Comp_v6_KLD005/opt.txt' \
+    if args.dataname == 'kit' else '/home/vkatariy/BAD/dataset/prepare/checkpoints/t2m/Comp_v6_KLD005/opt.txt'
 wrapper_opt = get_opt(dataset_opt_path, torch.device(args.device))
 eval_wrapper = EvaluatorModelWrapper(wrapper_opt)
 
 ##### ---- Dataloader ---- #####
 from utils.word_vectorizer import WordVectorizer
-w_vectorizer = WordVectorizer('./glove', 'our_vab')
+# w_vectorizer = WordVectorizer('./glove', 'our_vab')
+w_vectorizer = WordVectorizer('/home/vkatariy/BAD/dataset/prepare/glove', 'our_vab')
+
 train_dataset = dataset_TM_train.T2MDataset(
     args.dataname, args.batch_size, args.nb_code, args.codebook_dir,
     unit_length=2**args.down_t, args=args)
