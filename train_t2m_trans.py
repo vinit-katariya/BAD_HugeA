@@ -219,7 +219,7 @@ model = trans.Text2Motion_Transformer(vqvae=net,
                                 args=args)
 
 curr_epoch = 0
-model, curr_epoch = load_last_transformer(model, args, 'trans_best_fid.tar')
+model, curr_epoch = load_last_transformer(model, args, 'trans_best_fid.pth')
 
 # if args.resume_pth is not None:
 #     model, curr_epoch = load_last_transformer(model, args)
