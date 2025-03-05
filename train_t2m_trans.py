@@ -219,10 +219,12 @@ model = trans.Text2Motion_Transformer(vqvae=net,
                                 args=args)
 
 curr_epoch = 0
-if args.resume_pth is not None:
-    model, curr_epoch = load_last_transformer(model, args)
-else:
-    if master_process: args.logger.info("Train from scractch.")
+model, curr_epoch = load_last_transformer(model, args, 'trans_best_fid.tar')
+
+# if args.resume_pth is not None:
+#     model, curr_epoch = load_last_transformer(model, args)
+# else:
+#     if master_process: args.logger.info("Train from scractch.")
 
 model.to(local_rank)
 

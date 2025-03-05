@@ -6,7 +6,9 @@ def get_args_parser():
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     
     ## dataloader
-    
+    parser.add_argument('--motion_clip', type=str, default='/home/gmaldon2/research/momask-codes/motionclip_5_50.pth', help='dataset directory')    
+
+
     parser.add_argument('--dataname', type=str, default='t2m', help='dataset directory')
     parser.add_argument('--total_batch_size', default=128, type=int, help='batch size')
     parser.add_argument('--fps', default=[20], nargs="+", type=int, help='frames per second')

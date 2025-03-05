@@ -618,11 +618,15 @@ def load_trans_from_MMM(trans_encoder, args):
     return trans_encoder
 
 
-def load_last_transformer(transformer, args):
+def load_last_transformer(transformer, args,  which_model = "net_last.pth"):
     try:
         if args.master_process:
             args.logger.info('loading checkpoint from {}'.format(args.resume_pth))
-        ckpt = torch.load(os.path.join(args.resume_pth, 'net_last.pth'), map_location=args.device)
+        # ckpt = torch.load(os.path.join(args.resume_pth, 'net_last.pth'), map_location=args.device)
+        print("Vinit")
+        print(os.path.join(args.resume_pth, which_model))
+        ckpt = torch.load(os.path.join(args.resume_pth, which_model), map_location=args.device)
+        print(ckpt['trans'])
         print(transformer.load_state_dict(ckpt['trans'], strict=True))
         epoch = ckpt['epoch']
         return transformer, epoch
