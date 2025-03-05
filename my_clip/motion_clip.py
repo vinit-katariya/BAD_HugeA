@@ -2,6 +2,22 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+def encode_motion(self, motion_data, temporal_mask):
+    """
+    Encodes motion data into a 512-d embedding.
+
+    Args:
+        motion_data (torch.Tensor): Tensor of shape (batch_size, 196, 263)
+        temporal_mask (torch.Tensor): Mask for temporal data.
+
+    Returns:
+        torch.Tensor: Motion embeddings of shape (batch_size, 512)
+    """
+    motion_features = self.motion(motion_data.float(), temporal_mask)  # Forward pass through MotionTransformer
+    motion_features = motion_features / motion_features.norm(dim=-1, keepdim=True)  # Normalize features
+    return motion_features
+
+
 class QuickGELU(nn.Module):
     """GELU activation function used in CLIP."""
     def forward(self, x):
@@ -47,13 +63,13 @@ class MotionEncoder(nn.Module):
         self.dropout = nn.Dropout(dropout)
         self.hidden_size = hidden_size
 
-        if opt.dataset_name == 'kit':
+        if opt.dataname == 'kit':
             #KIT-ML GRAPH
             [root, torso, lfarm, rram, lfleg, rleg] = [0], [1, 2, 3, 4], [5, 6, 7], [8, 9, 10], [11, 12, 13, 14, 15], [16,17,18,19,20]
             self.body_parts = [root, torso, lfarm, rram, lfleg, rleg]
             njoint_per_part = [len(p) for p in [root, torso, lfarm, rram, lfleg, rleg]]
 
-        elif opt.dataset_name == 't2m':
+        elif opt.dataname == 't2m':
             # HUMAN ML3D GRAPH
             [root, torso, rarm, larm, rleg, lleg] = [0], [0, 3, 6, 9, 12, 15], [14, 17, 19, 21], [ 13, 16, 18, 20], [2, 5, 8, 11], [1, 4, 7, 10]
             self.body_parts = [root, torso, rarm, larm, rleg, lleg]

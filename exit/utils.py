@@ -618,19 +618,69 @@ def load_trans_from_MMM(trans_encoder, args):
     return trans_encoder
 
 
-def load_last_transformer(transformer, args):
+# def load_last_transformer(transformer, args,  which_model = "net_last.pth"):
+#     try:
+#         if args.master_process:
+#             args.logger.info('loading checkpoint from {}'.format(args.resume_pth))
+#         # ckpt = torch.load(os.path.join(args.resume_pth, 'net_last.pth'), map_location=args.device)
+#         print("Vinit")
+#         print(os.path.join(args.resume_pth, which_model))
+#         ckpt = torch.load(os.path.join(args.resume_pth, which_model), map_location=args.device)
+#         print(ckpt['trans'])
+#         print(transformer.load_state_dict(ckpt['trans'], strict=True))
+#         epoch = ckpt['epoch']
+#         return transformer, epoch
+#     except:
+#         print(50*'--')
+#         print('Could Not Load Model State Dict')
+#         print(50*'--')
+#     return transformer, 0
+
+
+def load_last_transformer(transformer, args,  which_model = "net_last.pth"):
     try:
         if args.master_process:
             args.logger.info('loading checkpoint from {}'.format(args.resume_pth))
-        ckpt = torch.load(os.path.join(args.resume_pth, 'net_last.pth'), map_location=args.device)
+
+        # print("test")  # Always prints
+        # checkpoint_path = os.path.join(args.resume_pth, which_model)
+        checkpoint_path = os.path.join(args.resume_trans, which_model)
+        print("Checkpoint Path:", checkpoint_path)
+
+        # Ensure checkpoint file exists
+        if not os.path.exists(checkpoint_path):
+            raise FileNotFoundError(f"Checkpoint file not found: {checkpoint_path}")
+
+        # Load the checkpoint
+        ckpt = torch.load(checkpoint_path, map_location=args.device)
+        print("Checkpoint Keys:", ckpt.keys())
+
+        # Check for 'trans' key
+        if 'trans' not in ckpt:
+            raise KeyError("'trans' key not found in checkpoint!")
+
+        print("Loading model state dict...")
+        # print(ckpt['trans'])
+
+        # Attempt to load the model weights
         print(transformer.load_state_dict(ckpt['trans'], strict=True))
-        epoch = ckpt['epoch']
+
+        # # Check for 'epoch' key
+        # if 'epoch' not in ckpt:
+        #     raise KeyError("'epoch' key not found in checkpoint!")
+
+        epoch = 0 # ckpt['epoch']
+        print(f"Successfully loaded model. Resuming from epoch {epoch}")
         return transformer, epoch
-    except:
+
+    except Exception as e:
         print(50*'--')
         print('Could Not Load Model State Dict')
+        print(f"Error: {e}")  # Print the actual error message
         print(50*'--')
+
     return transformer, 0
+
 
 def load_last_opt_sch(optimizer, scheduler, args):
     try:
